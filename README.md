@@ -4,7 +4,7 @@ Automated tracking and trading system that monitors Nancy Pelosi's stock portfol
 
 ## Overview
 
-This project scrapes Nancy Pelosi's current stock holdings from [PelosiTracker.app](https://pelositracker.app/portfolios/nancy-pelosi) and automatically executes trades to match her portfolio allocation. The system runs daily via GitHub Actions after market close.
+This project scrapes Nancy Pelosi's current stock holdings from [PelosiTracker.app](https://pelositracker.app/portfolios/nancy-pelosi) and automatically executes trades to match her portfolio allocation. The system runs daily via GitHub Actions at market open.
 
 ## Features
 
@@ -133,7 +133,7 @@ The script will:
 ### Automated Execution (GitHub Actions)
 
 The workflow runs automatically:
-- **Schedule**: Daily at 2:30 PM UTC (after market close) on weekdays
+- **Schedule**: Daily at 2:30 PM UTC (at market open) on weekdays
 - **Manual Trigger**: Available via GitHub Actions UI
 
 The workflow:
@@ -167,7 +167,7 @@ Configure order behavior via environment variables:
 ## Workflow Schedule
 
 The GitHub Actions workflow runs:
-- **Cron**: `30 14 * * 1-5` (Monday-Friday at 2:30 PM UTC - after market close)
+- **Cron**: `30 14 * * 1-5` (Monday-Friday at 2:30 PM UTC - at market open)
 - **Manual**: Can be triggered via GitHub Actions UI
 
 To modify the schedule, edit `.github/workflows/daily-allocation.yml`.
