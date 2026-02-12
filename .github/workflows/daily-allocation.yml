@@ -1,4 +1,4 @@
-name: Daily RSI Momentum Allocation & Order Execution (Pelosi-Tracker)
+name: Daily Allocation & Order Execution (Pelosi-Tracker)
 
 on:
   schedule:
