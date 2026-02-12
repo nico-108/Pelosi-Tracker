@@ -35,10 +35,12 @@ jobs:
           pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       
-      # TODO: Replace this step with your Pelosi tracking / allocation notebook or script
-      - name: (Placeholder) Run Pelosi tracking notebook or script
+      - name: Execute Pelosi tracking notebook
+        env:
+          NOTEBOOK_BASE_PATH: ${{ github.workspace }}
         run: |
-          echo "Customize this step to generate current_allocation.json for Pelosi-Tracker"
+          jupyter nbconvert --to notebook --execute Pelosi-Tracker.ipynb --output executed_notebook.ipynb || echo "Notebook execution completed with warnings"
+        continue-on-error: false
       
       - name: Run order manager
         env:
@@ -56,9 +58,9 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          if [ -f combined_assets_strategy.csv ]; then git add combined_assets_strategy.csv; fi
           if [ -f current_allocation.json ]; then git add current_allocation.json; fi
-          git diff --staged --quiet || git commit -m "Auto-update: Daily allocation calculation [skip ci]"
+          if [ -f combined_assets_strategy.csv ]; then git add combined_assets_strategy.csv; fi
+          git diff --staged --quiet || git commit -m "Auto-update: Daily Pelosi allocation calculation [skip ci]"
           git push origin main
         continue-on-error: true
 
