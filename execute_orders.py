@@ -47,19 +47,14 @@ DEFAULT_ORDER_CONFIG = {
     'max_order_size': 150000.0,
 }
 
-# Hardcoded ticker mapping: Maps notebook ticker symbols to Alpaca trading symbols
-# This allows multiple executables with different mappings
-TICKER_MAPPING = {
+# Crypto ticker mapping: Maps crypto ticker formats to Alpaca trading symbols
+# Only needed for crypto assets - regular US stock tickers are used directly
+# Format: Maps allocation file ticker -> Alpaca trading symbol
+# Example: "BTC-USD" -> "BTC/USD"
+CRYPTO_TICKER_MAPPING = {
     "BTC-USD": "BTC/USD",
     "SOL-USD": "SOL/USD",
-    "SPXL": "SPXL",
-    "TQQQ": "TQQQ",
-    "AAPL": "AAPL",
-    "GOOGL": "GOOGL",
-    "META": "META",
-    "GLD": "GLD",
-    "SPY": "SPY",
-    "QQQ": "QQQ"
+    # Add other crypto mappings here if needed
 }
 
 # Crypto symbols list (both formats: with and without slash)
@@ -164,31 +159,28 @@ def get_account_equity(client: TradingClient) -> float:
         raise
 
 
-def calculate_target_positions(allocations: dict, account_equity: float, ticker_mapping: dict) -> Dict[str, float]:
-    """Calculate target dollar amounts for each position."""
+def calculate_target_positions(allocations: dict, account_equity: float, crypto_mapping: dict = None) -> Dict[str, float]:
+    """Calculate target dollar amounts for each position.
+    
+    Args:
+        allocations: Dict with format {ticker: allocation_percentage}
+        account_equity: Total account equity in dollars
+        crypto_mapping: Optional dict for crypto ticker mappings (e.g., "BTC-USD" -> "BTC/USD")
+                       If not provided, tickers are used directly
+    
+    Returns:
+        Dict with format {symbol: target_dollar_value}
+    """
+    if crypto_mapping is None:
+        crypto_mapping = {}
+    
     targets = {}
     
     for asset, allocation_pct in allocations.items():
-        # Skip safe haven assets (they're handled separately)
-        if asset.endswith('_SAFE'):
-            # Map safe haven to underlying asset (e.g., GLD_SAFE -> GLD)
-            base_asset = asset.replace('_SAFE', '')
-            if base_asset in ticker_mapping:
-                symbol = ticker_mapping[base_asset]
-                target_value = (allocation_pct / 100.0) * account_equity
-                # Add to existing target if base asset already has allocation
-                if symbol in targets:
-                    targets[symbol] += target_value
-                else:
-                    targets[symbol] = target_value
-        else:
-            # Regular asset
-            if asset in ticker_mapping:
-                symbol = ticker_mapping[asset]
-                target_value = (allocation_pct / 100.0) * account_equity
-                targets[symbol] = target_value
-            else:
-                logger.warning(f"No mapping found for {asset}, skipping")
+        # Use crypto mapping if available, otherwise use ticker directly
+        symbol = crypto_mapping.get(asset, asset)
+        target_value = (allocation_pct / 100.0) * account_equity
+        targets[symbol] = target_value
     
     return targets
 
@@ -421,9 +413,6 @@ def main():
     
     logger.info(f"Order config: dry_run={order_config['dry_run']}, min_order_size=${order_config['min_order_size']}")
     
-    # Use hardcoded ticker mapping
-    ticker_mapping = TICKER_MAPPING
-    
     # Validate allocation file
     if 'allocations' not in allocation_data:
         logger.error("Invalid allocation file: missing 'allocations' key")
@@ -480,8 +469,8 @@ def main():
         positions_str[symbol] = f"{pos_data['qty']:.3f} shares (${pos_data['value']:.2f})"
     logger.info(f"Current positions: {positions_str}")
     
-    # Calculate target positions
-    target_positions = calculate_target_positions(allocations, account_equity, ticker_mapping)
+    # Calculate target positions - tickers are used directly, crypto mapping only for crypto assets
+    target_positions = calculate_target_positions(allocations, account_equity, CRYPTO_TICKER_MAPPING)
     logger.info(f"Target positions: {target_positions}")
     
     # Calculate orders needed
