@@ -1,0 +1,64 @@
+name: Daily RSI Momentum Allocation & Order Execution (Pelosi-Tracker)
+
+on:
+  schedule:
+    # Run daily at 4:30 PM ET (after market close)
+    # UTC: 4:30 PM ET = 9:30 PM ET (EST) or 8:30 PM ET (EDT)
+    # Using 21:30 UTC as default (adjust for DST)
+    - cron: '30 14 * * 1-5'  # Monday-Friday at 14:30 UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  calculate-allocation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write  # Allow workflow to push commits
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+      
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      # TODO: Replace this step with your Pelosi tracking / allocation notebook or script
+      - name: (Placeholder) Run Pelosi tracking notebook or script
+        run: |
+          echo "Customize this step to generate current_allocation.json for Pelosi-Tracker"
+      
+      - name: Run order manager
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          ALPACA_BASE_URL: ${{ secrets.ALPACA_BASE_URL }}
+          DRY_RUN: ${{ secrets.DRY_RUN || 'false' }}
+          MIN_ORDER_SIZE: ${{ secrets.MIN_ORDER_SIZE || '1.0' }}
+        run: |
+          python execute_orders.py
+        continue-on-error: true
+      
+      - name: Commit updated files
+        if: always()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          if [ -f combined_assets_strategy.csv ]; then git add combined_assets_strategy.csv; fi
+          if [ -f current_allocation.json ]; then git add current_allocation.json; fi
+          git diff --staged --quiet || git commit -m "Auto-update: Daily allocation calculation [skip ci]"
+          git push origin main
+        continue-on-error: true
+

@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+.ipynb_checkpoints/
+order_execution.log
+scraping_error.log
+*.pyc
+*.pyo
+*.pyd
+.Python
+
