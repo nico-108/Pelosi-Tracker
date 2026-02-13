@@ -1,16 +1,16 @@
 {
-  "data_as_of_date": "2026-02-12",
+  "data_as_of_date": "2026-02-13",
   "allocations": {
     "NVDA": 19.0,
     "GOOGL": 16.0,
-    "AVGO": 16.0,
-    "VST": 9.0,
+    "AVGO": 15.0,
+    "VST": 10.0,
     "PANW": 7.0,
-    "TEM": 7.0,
+    "TEM": 6.0,
     "AMZN": 6.0,
     "IBTA.L": 5.0,
     "CRWD": 5.0,
-    "TSLA": 4.0,
+    "TSLA": 3.0,
     "MSFT": 3.0,
     "AAPL": 3.0
   }
