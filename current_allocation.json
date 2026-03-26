@@ -1,5 +1,5 @@
 {
-  "data_as_of_date": "2026-03-25",
+  "data_as_of_date": "2026-03-26",
   "allocations": {
     "NVDA": 19.0,
     "GOOGL": 16.0,
@@ -10,8 +10,8 @@
     "TEM": 6.0,
     "IBTA.L": 5.0,
     "CRWD": 5.0,
-    "MSFT": 3.0,
     "TSLA": 3.0,
+    "MSFT": 3.0,
     "AAPL": 3.0
   }
 }
