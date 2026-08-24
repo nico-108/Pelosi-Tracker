@@ -1,19 +1,20 @@
 {
-  "data_as_of_date": "2026-08-21",
+  "data_as_of_date": "2026-08-24",
   "allocations": {
-    "NVDA": 18.0,
-    "GOOGL": 14.0,
-    "AVGO": 14.0,
-    "PANW": 9.0,
-    "CRWD": 7.0,
-    "TEM": 7.0,
-    "VST": 7.0,
-    "AMZN": 6.0,
-    "IBTA.L": 4.0,
+    "NVDA": 15.0,
+    "GOOGL": 12.0,
+    "AVGO": 12.0,
+    "BE": 10.0,
+    "INTC": 10.0,
+    "PANW": 8.0,
+    "CRWD": 6.0,
+    "TEM": 6.0,
+    "VST": 6.0,
+    "AMZN": 5.0,
     "MSFT": 3.0,
-    "AAPL": 3.0,
+    "AAPL": 2.0,
     "TSLA": 2.0,
-    "INTC": 2.0,
-    "UBER": 2.0
+    "UBER": 2.0,
+    "IBTA.L": 2.0
   }
 }
